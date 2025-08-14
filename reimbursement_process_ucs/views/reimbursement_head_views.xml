@@ -1,0 +1,51 @@
+<odoo>
+    <record id="your_form_view_id" model="ir.ui.view">
+        <field name="name">reimbursement.head.form</field>
+        <field name="model">reimbursement.head</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="head"/>
+                        <field name="employee_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="reimbursement_head_tree_view" model="ir.ui.view">
+        <field name="name">reimbursement.head.tree</field>
+        <field name="model">reimbursement.head</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="head"/>
+                <field name="employee_ids" widget="many2many_tags"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="reimbursement_head_search_view" model="ir.ui.view">
+        <field name="name">reimbursement.head.search</field>
+        <field name="model">reimbursement.head</field>
+        <field name="arch" type="xml">
+            <search string="User-defined Defaults">
+                <field name="head"/>
+                <field name="employee_ids"/>
+                <filter string="Head" name="head" context="{'group_by': 'head'}"/>
+                <filter string="Employee" name="Employees" context="{'group_by': 'employee_ids'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_reimbursement_head" model="ir.actions.act_window">
+        <field name="name">Reimbursement Head</field>
+        <field name="res_model">reimbursement.head</field>
+        <field name="view_mode">search,tree,form</field>
+    </record>
+
+</odoo>

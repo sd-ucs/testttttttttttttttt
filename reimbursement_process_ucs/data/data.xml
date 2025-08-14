@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <record id="seq_reimbursement_request" model="ir.sequence">
+        <field name="name">Reimbursement Request</field>
+        <field name="code">reimbursement.request</field>
+        <field name="prefix">REIMB/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="reimbursement_submission_template" model="mail.template">
+        <field name="name">Reimbursement Submission Notification</field>
+        <field name="email_from">{{ (user.company_id.partner_id.email or '') }}</field>
+        <field name="subject">New Reimbursement Request from {{ object.employee_id.name }}</field>
+        <field name="email_to">{{ ','.join([user.email for user in object.env.ref('reimbursement_process_ucs.group_reimbursement_admin').users if user.email]) }}</field>
+        <field name="model_id" ref="reimbursement_process_ucs.model_reimbursement_request"/>
+        <field name="auto_delete" eval="False"/>
+        <field name="body_html" type="html">
+            <div style="font-family: 'Lucida Grande', Ubuntu, Arial, Verdana, sans-serif;
+                    font-size: 14px; color: #222222; background-color: #ffffff;">
+                <p>Hello,</p>
+                <p>
+                    A new reimbursement request <strong><t t-out="object.name"/></strong>
+                    has been submitted by <strong><t t-out="object.employee_id.name"/></strong>.
+                </p>
+                <p>Please review and take appropriate action in the system.</p>
+                <p>Thank you.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="reimbursement_approval_template" model="mail.template">
+        <field name="name">Reimbursement Approval Email</field>
+        <field name="email_from">{{(user.company_id.partner_id.email or '')}}</field>
+        <field name="subject">Reimbursement Request</field>
+        <field name="email_to">{{object.employee_id.work_email}}</field>
+        <field name="model_id" ref="reimbursement_process_ucs.model_reimbursement_request"/>
+        <field name="auto_delete" eval="False"/>
+        <field name="body_html" type="html">
+            <div style="font-family: 'Lucida Grande', Ubuntu, Arial, Verdana, sans-serif;
+                    font-size: 12px; color: #222222; background-color: #ffffff;">
+                <p>Dear <t t-out="object.employee_id.name"/>,</p>
+                <p>Your reimbursement request <strong><t t-out="object.name"/></strong> has been <strong>approved</strong>.</p>
+                <p>Total Approved Amount: <strong><t t-out="object.approve_total_amount"/></strong></p>
+                <p>Thank you.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="reimbursement_rejection_template" model="mail.template">
+        <field name="name">Reimbursement Rejection Email</field>
+        <field name="email_from">{{(user.company_id.partner_id.email or '')}}</field>
+        <field name="subject">Reimbursement Request</field>
+        <field name="email_to">{{object.employee_id.work_email}}</field>
+        <field name="model_id" ref="reimbursement_process_ucs.model_reimbursement_request"/>
+        <field name="auto_delete" eval="False"/>
+        <field name="body_html" type="html">
+            <div style="font-family: 'Lucida Grande', Ubuntu, Arial, Verdana, sans-serif;
+                    font-size: 12px; color: #222222; background-color: #ffffff;">
+                <p>Dear <t t-out="object.employee_id.name"/>,</p>
+                <p>We're sorry to inform you that your reimbursement request <strong><t t-out="object.name"/></strong> has been <strong>rejected</strong>.</p>
+                <p>Reason: <strong><t t-out="object.reason or 'N/A'"/></strong></p>
+                <p>Please contact HR for further details.</p>
+            </div>
+        </field>
+    </record>
+
+    <!-- <record id="action_reimbursement_approve_multi" model="ir.actions.server">
+        <field name="name">Approve Reimbursements</field>
+        <field name="model_id" ref="reimbursement_process_ucs.model_reimbursement_request"/>
+        <field name="binding_model_id" ref="reimbursement_process_ucs.model_reimbursement_request"/>
+        <field name="state">code</field>
+        <field name="code">records.action_approve_multi()</field>
+        <field name="binding_view_types">list</field>
+    </record>
+
+    <record id="action_reimbursement_reject_multi" model="ir.actions.server">
+        <field name="name">Reject Reimbursements</field>
+        <field name="model_id" ref="reimbursement_process_ucs.model_reimbursement_request"/>
+        <field name="binding_model_id" ref="reimbursement_process_ucs.model_reimbursement_request"/>
+        <field name="state">code</field>
+        <field name="code">records.action_reject_multi()</field>
+        <field name="binding_view_types">list</field>
+    </record> -->
+
+    <!-- <record id="ir_cron_calculate_total_reimbursement" model="ir.cron">
+        <field name="name">Reimbursement: Calculate Total Reimbursement</field>
+        <field name="model_id" ref="model_hr_contract"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_calculate_total_reimbursement()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record> -->
+</odoo>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_reimbursement_report" model="ir.ui.view">
+        <field name="name">reimbursement.line.list</field>
+        <field name="model">reimbursement.line</field>
+        <field name="arch" type="xml">
+            <tree string="Reimbusement Report" editable="bottom" create="0" edit="0">
+                <field name="request_id" />
+                <field name="date" />
+                <field name="reimbursement_type" />
+                <field name="reimbursement_ytd" sum="Total YTD" widget="monetary"/>
+                <field name="amount" sum="Total Amount" widget="monetary"/>
+                <field name="approved_amount" sum="Total Approved" widget="monetary"/>
+                <field name="reimbusement_to_submitted" sum="Total Approved" widget="monetary"/>
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="reimbursement_line_search_view" model="ir.ui.view">
+        <field name="name">reimbursement.line.search</field>
+        <field name="model">reimbursement.line</field>
+        <field name="arch" type="xml">
+            <search string="Reimbursement Report">
+                <field name="employee_id"/>
+                <field name="month"/>
+                <field name="reimbursement_type"/>
+                <field name="exceed_reason"/>
+
+                <filter name="date" date="date"/>
+
+                <separator/>
+                <filter string="Fuel/Vehicle" name="fule" domain="[('reimbursement_type','=','fule')]"/>
+                <filter string="Uniform" name="uniform" domain="[('reimbursement_type','=','uniform')]"/>
+                <filter string="Medical" name="medical" domain="[('reimbursement_type','=','medical')]"/>
+                <filter string="Helper" name="helper" domain="[('reimbursement_type','=','helper')]"/>
+                <filter string="Books and Periodicals" name="books_periodicals" domain="[('reimbursement_type','=','books_periodicals')]"/>
+                <filter string="Employee" name="group_by_employee" context="{'group_by': 'employee_id'}"/>
+                <filter string="Month" name="group_by_month" context="{'group_by': 'month'}"/>
+                <filter name="group_date" string="Date" context="{'group_by':'date'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_tree_reimbursement_report" model="ir.actions.act_window">
+        <field name="name">Reimbursement Report</field>
+        <field name="res_model">reimbursement.line</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[('state','!=','draft')]</field>
+        <!-- <field name="context">{'search_default_group_employee':1, 'search_default_search_default_today': 1}</field> -->
+        <field name="view_id" eval="False"/>
+    </record>
+
+</odoo>

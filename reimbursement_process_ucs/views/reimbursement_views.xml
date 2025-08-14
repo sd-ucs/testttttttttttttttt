@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_reimbursement_request_tree" model="ir.ui.view">
+        <field name="name">reimbursement.request.tree</field>
+        <field name="model">reimbursement.request</field>
+        <field name="arch" type="xml">
+            <tree string="Reimbursements">
+                <field name="name"/>
+                <field name="month"/>
+                <field name="employee_id"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="total_amount" readonly="1" sum="total_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="approve_total_amount" readonly="1" sum="approve_total_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="state" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_reimbursement_request_form" model="ir.ui.view">
+        <field name="name">reimbursement.request.form</field>
+        <field name="model">reimbursement.request</field>
+        <field name="arch" type="xml">
+            <form string="Reimbursement Request">
+                <header>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved,rejected"
+                           statusbar_colors="{'submitted':'blue','approved':'green','rejected':'red'}"
+                           invisible="state in ['approved','rejected']"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved"
+                           invisible="state != 'approved'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,rejected"
+                           invisible="state != 'rejected'"/>
+                    <button name="action_submit" string="Submit" type="object"
+                            invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft"
+                            type="object" class="btn-secondary"
+                            invisible="state != 'rejected'"/>
+                    <button name="action_approve" string="Approve" type="object"
+                            invisible="state != 'submitted'" class="btn-success"
+                            groups="reimbursement_process_ucs.group_reimbursement_admin"/>
+                    <button name="action_reject" string="Reject" type="object"
+                            invisible="state != 'submitted'" class="btn-danger"
+                            groups="reimbursement_process_ucs.group_reimbursement_admin"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id" readonly="state != 'draft'"/>
+                            <field name="department_id" readonly="1" force_save="1"/>
+                            <field name="manager_id" readonly="1" force_save="1"/>
+                            <field name="job_position_id" readonly="1" force_save="1"/>
+                        </group>
+                        <group>
+                            <field name="date" readonly="state != 'draft'"/>
+                            <field name="work_email" readonly="1" force_save="1"/>
+                            <field name="mobile_phone" readonly="1" force_save="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Lines">
+                            <field name="line_ids" readonly="state not in ['draft','submitted']" >
+                                <tree editable="bottom">
+                                    <field name="reimbursement_type"/>
+                                    <field name="request_id" column_invisible="1"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="description"/>
+                                    <field name="is_admin" column_invisible="1"/>
+                                    <field name="is_exceed" column_invisible="1"/>
+                                    <field name="reimbursement_ytd" readonly="1"/>
+                                    <field name="amount" required="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name ="approved_amount" readonly="not is_admin" force_save="1"  widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="exceed_reason" string="Approval Reason" readonly="not is_exceed"/>
+                                    <field name="attachment_ids" widget="many2many_binary"/>
+                                </tree>
+                            </field>
+                            <group name="note_group" col="6" class="mt-2 mt-md-0">
+                                <group colspan="4">
+                                    <field colspan="2" name="note" nolabel="1" placeholder="Notes"/>
+                                </group>
+                                <group class="oe_subtotal_footer" colspan="2" name="total">
+                                    <field name="total_amount" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="approve_total_amount" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </group>
+                                <div class="clearfix"/>
+                            </group>
+                        </page>
+                        <page string="Rejection Reason">
+                            <field name="reason"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="reimbursement_request_search_view" model="ir.ui.view">
+        <field name="name">reimbursement.request.search</field>
+        <field name="model">reimbursement.request</field>
+        <field name="arch" type="xml">
+            <search string="Reimbursement Requests">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="state"/>
+                <field name="month"/>
+                <field name="date"/>
+                <field name="department_id"/>
+                <field name="job_position_id"/>
+                <field name="total_amount"/>
+                <field name="line_ids" string="Reimbursement Type" filter_domain="[('reimbursement_type', 'ilike', self)]"/>
+                <field name="line_ids" string="Reason for Less Approval" filter_domain="[('line_ids.exceed_reason', 'ilike', self)]"/>
+
+                <filter string="Draft" name="draft_filter" domain="[('state','=','draft')]"/>
+                <filter string="Submitted" name="submitted_filter" domain="[('state','=','submitted')]"/>
+                <filter string="Approved" name="approved_filter" domain="[('state','=','approved')]"/>
+                <filter string="Rejected" name="rejected_filter" domain="[('state','=','rejected')]"/>
+
+                <separator/>
+                <filter string="Employee" name="group_by_employee" context="{'group_by': 'employee_id'}"/>
+                <filter string="State" name="group_by_state" context="{'group_by': 'state'}"/>
+                <filter string="Month" name="group_by_month" context="{'group_by': 'month'}"/>
+                <filter string="Department" name="group_by_department" context="{'group_by': 'department_id'}"/>
+                <filter string="Job Position" name="group_by_job" context="{'group_by': 'job_position_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_reimbursement_request" model="ir.actions.act_window">
+        <field name="name">Reimbursements</field>
+        <field name="res_model">reimbursement.request</field>
+        <field name="view_mode">search,tree,form</field>
+        <field name="domain">[('state','!=','submitted')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your reimbursement request</p>
+        </field>
+    </record>
+
+    <record id="action_reimbursement_to_approve" model="ir.actions.act_window">
+        <field name="name">To Approve</field>
+        <field name="res_model">reimbursement.request</field>
+        <field name="view_mode">search,tree,form</field>
+        <field name="domain">[('state','=','submitted')]</field>
+        <field name="context">{}</field>
+    </record>
+</odoo>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem id="menu_reimbursement_root"
+              name="Reimbursements"
+              sequence="10"
+              groups="reimbursement_process_ucs.group_reimbursement_admin,reimbursement_process_ucs.group_reimbursement_user"
+              web_icon="reimbursement_process_ucs,static/description/img.png"/>
+
+    <menuitem id="menu_reimbursement_process"
+              name="Reimbursement"
+              parent="menu_reimbursement_root"
+              action="action_reimbursement_request"
+    />
+    <menuitem id="menu_reimbursement_request"
+              name="Reimbursement"
+              parent="menu_reimbursement_process"
+              action="action_reimbursement_request"
+    />
+
+    <menuitem id="menu_reimbursement_to_approve"
+              name="To Approve"
+              parent="menu_reimbursement_process"
+              action="action_reimbursement_to_approve"
+              sequence="15"
+              groups="reimbursement_process_ucs.group_reimbursement_admin"/>
+
+    <menuitem id="menu_reimbursement_reporting"
+              name="Reporting" parent="menu_reimbursement_root"
+              action="action_tree_reimbursement_report"
+    />
+
+    <!-- <menuitem id="menu_reimbursement_configuration"
+              name="Configuration"
+              parent="menu_reimbursement_root"
+              groups="reimbursement_process_ucs.group_reimbursement_admin"
+    /> -->
+
+    <!-- <menuitem id="menu_hr_expense"
+              name="Heads"
+              parent="menu_reimbursement_configuration"
+              action="action_reimbursement_head"
+              sequence="4"/> -->
+
+</odoo>

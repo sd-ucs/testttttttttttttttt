@@ -1,0 +1,27 @@
+<odoo>
+    <record id="reimbursement_wizard_form_view" model="ir.ui.view">
+        <field name="name">reimbursement.wizard.form</field>
+        <field name="model">reimbursement.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Edit Domain Access">
+                <sheet>
+                    <group>
+                        <field name="reason"/>
+                    </group>
+                    <footer>
+                        <button string="Save" type="object" name="action_save_domain" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_reimbursement_wizard" model="ir.actions.act_window">
+        <field name="name">Edit Domain Access</field>
+        <field name="res_model">reimbursement.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="reimbursement_process_ucs.reimbursement_wizard_form_view"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

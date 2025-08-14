@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_reimbursement_request,access.reimbursement.request,model_reimbursement_request,,1,1,1,1
+access_reimbursement_line,access.reimbursement.line,model_reimbursement_line,,1,1,1,1
+access_reimbursement_wizard,access.reimbursement.wizard,model_reimbursement_wizard,,1,1,1,1
+access_reimbursement_report,access.reimbursement.report,model_reimbursement_report,,1,1,1,1
+access_payslip_reimbursement_calculation,payslip.reimbursement.calculation,model_payslip_reimbursement_calculation,,1,1,1,1
